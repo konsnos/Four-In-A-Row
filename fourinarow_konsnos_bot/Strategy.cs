@@ -17,9 +17,11 @@ namespace FourInARow
             r = new Random();
         }
         
-        /**
-         *  AI here.
-         **/
+        /// <summary>
+        /// Calculate the next move.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public int NextMove(Board board)
         {
             int col;
@@ -33,11 +35,12 @@ namespace FourInARow
             }
             return col;
         }
-        
-        /**
-         * Checks every column if me or the opponent will win.
-         * @returns Column to place for a win or avoid loss. -1 if there is no imminent win or loss. 
-         **/
+
+        /// <summary>
+        /// Checks every column if me or the opponent will win.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns>Column to place for a win or avoid loss. -1 if there is no imminent win or loss.</returns>
         private int checkColsForWins(Board board)
         {
             for (int c = 0; c < board.ColsLength; c++)
@@ -64,10 +67,14 @@ namespace FourInARow
             return -1;
         }
         
-        /**
-         * Checks if a player will win with a move at a certain position.
-         * @returns  True to win. False if not.
-         **/
+        /// <summary>
+        /// Checks if a player will win with a move at a certain position.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="fs"></param>
+        /// <param name="row">Row starts from top.</param>
+        /// <param name="col"></param>
+        /// <returns>True to win.False if not.</returns>
         private bool checkWinMove(Board board, FieldState fs, int row, int col)
         {
             int straightLine;
@@ -82,7 +89,7 @@ namespace FourInARow
                     {
                         if(col - i > -1)
                         {
-                            if(board.State(col-i, row) == fs)
+                            if(board.GetState(col-i, row) == fs)
                                 straightLine++;
                             else
                                 continueLeft = false;
@@ -95,7 +102,7 @@ namespace FourInARow
                     {
                         if(col + i < board.ColsLength)
                         {
-                            if(board.State(col+i, row) == fs)
+                            if(board.GetState(col+i, row) == fs)
                                 straightLine++;
                             else
                                 continueRight = false;
@@ -120,7 +127,7 @@ namespace FourInARow
                     {
                         if(row+i<board.RowsLength)
                         {
-                            if(board.State(col, row+i) == fs)
+                            if(board.GetState(col, row+i) == fs)
                                 straightLine++;
                             else
                                 continueBottom = false;
@@ -133,7 +140,7 @@ namespace FourInARow
                     {
                         if(row - i>-1)
                         {
-                            if(board.State(col, row-i) == fs)
+                            if(board.GetState(col, row-i) == fs)
                                 straightLine++;
                             else
                                 continueTop = false;
@@ -146,16 +153,91 @@ namespace FourInARow
                         return true;
                 }
             }
-            
-            //TODO: Check diagonal
+
+            // Check top left to bottom right
+            straightLine = 1;
+            {
+                bool continueTopLeft = true;
+                bool continueBottomRight = true;
+                for(int i = 1; continueTopLeft || continueBottomRight;i++)
+                {
+                    if(continueTopLeft)
+                    {
+                        if (row - i > -1 && col - i > -1)
+                        {
+                            if (board.GetState(col - i, row - i) == fs)
+                                straightLine++;
+                            else
+                                continueTopLeft = false;
+                        }
+                        else
+                            continueTopLeft = false;
+                    }
+
+                    if(continueBottomRight)
+                    {
+                        if (row + i < board.RowsLength && col + i < board.ColsLength)
+                        {
+                            if (board.GetState(col + i, row + i) == fs)
+                                straightLine++;
+                            else
+                                continueBottomRight = false;
+
+                        }
+                        else
+                            continueBottomRight = false;
+                    }
+
+                    if (straightLine > 3)
+                        return true;
+                }
+            }
+
+            // Check top right to bottom left
+            straightLine = 1;
+            {
+                bool continueTopRight = true;
+                bool continueBottomLeft = true;
+                for(int i = 1;continueTopRight || continueBottomLeft;i++)
+                {
+                    if(continueTopRight)
+                    {
+                        if (col + i < board.ColsLength && row - i > -1)
+                        {
+                            if (board.GetState(col + i, row - i) == fs)
+                                straightLine++;
+                            else
+                                continueTopRight = false;
+                        }
+                        else
+                            continueTopRight = false;
+                    }
+
+                    if(continueBottomLeft)
+                    {
+                        if (col - i > -1 && row + i < board.RowsLength)
+                        {
+                            if (board.GetState(col - i, row + i) == fs)
+                                straightLine++;
+                            else
+                                continueBottomLeft = false;
+                        }
+                        else
+                            continueBottomLeft = false;
+                    }
+
+                    if (straightLine > 3)
+                        return true;
+                }
+            }
             
             return false;
         }
-        
-        /**
-         * Checks if a column to drop has a valid movement.
-         * @return True if the move is valid. False if not.
-         **/
+
+        ///<summary>
+        /// Checks if a column to drop has a valid movement.
+        /// </summary>
+        /// <returns>True if the move is valid. False if not.</returns>
         private bool checkIfValid(Board board, int dropCol)
         {
             if(board.GetColumnHeight(dropCol) == -1)

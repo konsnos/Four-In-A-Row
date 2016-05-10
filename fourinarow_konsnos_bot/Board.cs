@@ -5,12 +5,12 @@ namespace FourInARow
 {
     public class Board
     {
-        /** Board begins from top left. */
+        /// <summary>Board begins from top left.</summary>
         private int[][] _boardArray;
         private int _mybotId;
-        /** Columns */
+        /// <summary> Columns length. </summary>
         public int ColsLength {get;private set;}
-        /** Rows */
+        /// <summary> Rows column. Starts from top. </summary>
         public int RowsLength {get;private set;}
 
         public void SetMyBotId(int myBotId)
@@ -36,22 +36,28 @@ namespace FourInARow
             return _boardArray[0].Length;
         }
         
-        /**
-         * Checks the next free row in a column and returns it. Returns the length of the column if full.
-         * @returns -1 if column is full.
-         **/
+        /// <summary>
+        /// Checks the next free row in a column and returns it. Returns the length of the column if full.
+        /// </summary>
+        /// <returns>-1 if column is full.</returns>
         public int GetColumnHeight(int col)
         {
             for (int row = RowsLength - 1; row > -1; row--)
             {
-                if(State(col, row) == FieldState.Free)
+                if(GetState(col, row) == FieldState.Free)
                     return row;
             }
             
             return -1;
         }
-
-        public FieldState State(int col, int row)
+        
+        /// <summary>
+        /// Checks the state of a field.
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="row"></param>
+        /// <returns>FieldState enum of Free, Me, or Opponent.</returns>
+        public FieldState GetState(int col, int row)
         {
             if (_boardArray[row][col] == 0) 
                 return FieldState.Free;

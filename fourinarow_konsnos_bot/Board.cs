@@ -18,11 +18,21 @@ namespace FourInARow
             _mybotId = myBotId;
         }
 
+        public void SetColumnsLength(int newColsLength)
+        {
+            ColsLength = newColsLength;
+        }
+
+        public void SetRowsLength(int newRowsLength)
+        {
+            RowsLength = newRowsLength;
+        }
+
         public void Update(int[][] boardArray)
         {
             _boardArray = boardArray;
-            ColsLength = _boardArray[0].Length;
-            RowsLength = _boardArray.Length;
+            //ColsLength = _boardArray[0].Length;
+            //RowsLength = _boardArray.Length;
 
             if (GlobalVars.PRINT_DEBUG)
             {

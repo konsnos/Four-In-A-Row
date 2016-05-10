@@ -31,6 +31,12 @@ namespace FourInARow
                                 var myBotId = int.Parse(parts[2]);
                                 board.SetMyBotId(myBotId);
                                 break;
+                            case "field_columns":
+                                board.SetColumnsLength(int.Parse(parts[2]));
+                                break;
+                            case "field_rows":
+                                board.SetRowsLength(int.Parse(parts[2]));
+                                break;
                         }
                         break;
                     case "update":

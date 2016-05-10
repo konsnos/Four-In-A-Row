@@ -1,18 +1,12 @@
 ﻿using System;
 
-namespace FourInARow
+namespace FourInARow.Strategies
 {
-
-    public interface IStrategy
-    {
-        int NextMove(Board board);
-    }
-
-    public class Strategy : IStrategy
+    public class BasicStrategy : IStrategy
     {
         Random r;
         
-        public Strategy()
+        public BasicStrategy()
         {
             r = new Random();
         }
@@ -31,7 +25,7 @@ namespace FourInARow
                 do
                 {
                     col = r.Next(board.ColsLength);
-                } while (!checkIfValid(board, col));
+                } while (!board.CheckIfValid(col));
             }
             return col;
         }
@@ -233,21 +227,5 @@ namespace FourInARow
             
             return false;
         }
-
-        ///<summary>
-        /// Checks if a column to drop has a valid movement.
-        /// </summary>
-        /// <returns>True if the move is valid. False if not.</returns>
-        private bool checkIfValid(Board board, int dropCol)
-        {
-            if(board.GetColumnHeight(dropCol) == -1)
-            {
-                if (GlobalVars.PRINT_DEBUG)
-                    Console.WriteLine("Invalid move at col {0} rejected", dropCol);
-                return false;
-            }
-            return true;
-        }
     }
-
 }

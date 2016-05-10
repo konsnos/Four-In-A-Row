@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using FourInARow.Strategies;
 
 namespace FourInARow
 {
@@ -14,13 +14,13 @@ namespace FourInARow
             string line;
             
             Board board = new Board();
-            IStrategy strategy = new Strategy();
+            IStrategy strategy = new BasicStrategy();
 
             while ((line = Console.ReadLine()) != null)
             {
-                if (line == String.Empty) continue;
+                if (line == string.Empty) continue;
 
-                var parts = line.Split(' ');
+                string[] parts = line.Split(' ');
 
                 switch (parts[0])
                 {
@@ -28,8 +28,7 @@ namespace FourInARow
                         switch (parts[1])
                         {
                             case "your_botid":
-                                var myBotId = int.Parse(parts[2]);
-                                board.SetMyBotId(myBotId);
+                                board.SetMyBotId(int.Parse(parts[2]));
                                 break;
                             case "field_columns":
                                 board.SetColumnsLength(int.Parse(parts[2]));
@@ -46,7 +45,7 @@ namespace FourInARow
                                 switch (parts[2])
                                 {
                                     case "field":
-                                        var boardArray = parts[3].Split(';').Select(x => x.Split(',').Select(int.Parse).ToArray()).ToArray();
+                                        int[][] boardArray = parts[3].Split(';').Select(x => x.Split(',').Select(int.Parse).ToArray()).ToArray();
                                         board.Update(boardArray);
                                     break;
                                 }
@@ -54,7 +53,7 @@ namespace FourInARow
                         }
                         break;
                     case "action":
-                        var move = strategy.NextMove(board);
+                        int move = strategy.NextMove(board);
                         Console.WriteLine("place_disc {0}", move);  // Output to apply move.
                         break;
                 }

@@ -5,8 +5,9 @@ namespace FourInARow
 {
     public class Board
     {
-        /// <summary>Board begins from top left.</summary>
+        /// <summary>Board begins from top left. </summary>
         private int[][] _boardArray;
+        /// <summary>Id of the player bot. </summary>
         private int _mybotId;
         /// <summary> Columns length. </summary>
         public int ColsLength {get;private set;}
@@ -74,6 +75,21 @@ namespace FourInARow
             if (_boardArray[row][col] == _mybotId) 
                 return FieldState.Me;
             return FieldState.Opponent;
+        }
+
+        ///<summary>
+        /// Checks if a column to drop has a valid movement.
+        /// </summary>
+        /// <returns>True if the move is valid. False if not.</returns>
+        public bool CheckIfValid(int dropCol)
+        {
+            if (GetColumnHeight(dropCol) == -1)
+            {
+                if (GlobalVars.PRINT_DEBUG)
+                    Console.WriteLine("Invalid move at col {0} rejected", dropCol);
+                return false;
+            }
+            return true;
         }
 
         public override string ToString()

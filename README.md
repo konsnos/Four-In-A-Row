@@ -8,11 +8,13 @@ The AI strategy is contained in class Strategy.cs
 
 ### How do I get set up? ###
 
-* Used editor is Visual Studio Community 2015. Solution file is included.
+* Used editor is Visual Studio Community 2015.
+* Solution file is included.
 
 ### Contribution guidelines ###
 
-* Each part should be appropriately documented. Commit message must be descriptive.
+* Each part should be appropriately documented.
+* Commit message must be descriptive.
 
 ### Who do I talk to? ###
 

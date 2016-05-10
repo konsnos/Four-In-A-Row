@@ -1,20 +1,18 @@
 # FOUR IN A ROW - BOT #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This README contains and describes the source of a bot for the Connect 4 game for theaigames.com portal.
 
-### What is this repository for? ###
+### Description ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+The AI strategy is contained in class Strategy.cs
 
 ### How do I get set up? ###
 
-* Used editor is Visual Studio Community 2015
+* Used editor is Visual Studio Community 2015. Solution file is included.
 
 ### Contribution guidelines ###
 
-
+* Each part should be appropriately documented. Commit message must be descriptive.
 
 ### Who do I talk to? ###
 

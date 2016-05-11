@@ -24,7 +24,7 @@
             return cols;
         }
 
-        public int[] GetPos(int index, int rowsLength, int colsLenght)
+        public int[] GetPos(int index, int rowsLength, int colsLength)
         {
             return new int[] { index % (rowsLength + 1), index / (rowsLength + 1)};
         }

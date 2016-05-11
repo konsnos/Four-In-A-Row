@@ -25,7 +25,7 @@ namespace FourInARow.BoardCrawlers
             return rows;
         }
 
-        public int[] GetPos(int index, int rowsLength, int colsLenght)
+        public int[] GetPos(int index, int rowsLength, int colsLength)
         {
             return new int[] { index / (colsLenght + 1), index % (colsLenght + 1)};
         }

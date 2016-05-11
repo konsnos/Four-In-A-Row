@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="BoardCrawlers\Columns.cs" />
+    <Compile Include="BoardCrawlers\DiagToLeft.cs" />
     <Compile Include="BoardCrawlers\DiagToRight.cs" />
     <Compile Include="BoardCrawlers\Interfaces\IBoardCrawler.cs" />
     <Compile Include="BoardCrawlers\Rows.cs" />

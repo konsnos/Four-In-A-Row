@@ -19,6 +19,6 @@ namespace FourInARow.BoardCrawlers
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        int[] GetPos(int index, int rowsLength, int colsLenght);
+        int[] GetPos(int index, int rowsLength, int colsLength);
     }
 }

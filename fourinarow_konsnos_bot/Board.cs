@@ -5,10 +5,10 @@ namespace FourInARow
 {
     public class Board
     {
-        /// <summary>Board begins from top left. </summary>
-        private int[][] _boardArray;
-        /// <summary>Id of the player bot. </summary>
-        private int _mybotId;
+        /// <summary>Board begins from top left. Jagged array is [Row][Column]. </summary>
+        public int[][] BoardArray { get; private set; }
+        /// <summary>Id of the player's bot. </summary>
+        public int MyBotId { get; private set; }
         /// <summary> Columns length. </summary>
         public int ColsLength {get;private set;}
         /// <summary> Rows column. Starts from top. </summary>
@@ -16,7 +16,7 @@ namespace FourInARow
 
         public void SetMyBotId(int myBotId)
         {
-            _mybotId = myBotId;
+            MyBotId = myBotId;
         }
 
         public void SetColumnsLength(int newColsLength)
@@ -31,20 +31,13 @@ namespace FourInARow
 
         public void Update(int[][] boardArray)
         {
-            _boardArray = boardArray;
-            //ColsLength = _boardArray[0].Length;
-            //RowsLength = _boardArray.Length;
+            BoardArray = boardArray;
 
             if (GlobalVars.PRINT_DEBUG)
             {
                 Console.WriteLine();
                 Console.WriteLine(ToString());
             }
-        }
-
-        public int ColsNumber()
-        {
-            return _boardArray[0].Length;
         }
         
         /// <summary>
@@ -61,6 +54,8 @@ namespace FourInARow
             
             return -1;
         }
+
+
         
         /// <summary>
         /// Checks the state of a field.
@@ -70,9 +65,9 @@ namespace FourInARow
         /// <returns>FieldState enum of Free, Me, or Opponent.</returns>
         public FieldState GetState(int col, int row)
         {
-            if (_boardArray[row][col] == 0) 
+            if (BoardArray[row][col] == 0) 
                 return FieldState.Free;
-            if (_boardArray[row][col] == _mybotId) 
+            if (BoardArray[row][col] == MyBotId) 
                 return FieldState.Me;
             return FieldState.Opponent;
         }
@@ -99,7 +94,7 @@ namespace FourInARow
             {
                 for (int j = 0; j < ColsLength; j++)
                 {
-                    sb.Append(_boardArray[i][j]).Append(" ");
+                    sb.Append(BoardArray[i][j]).Append(" ");
                 }
                 sb.Append(Environment.NewLine);
             }

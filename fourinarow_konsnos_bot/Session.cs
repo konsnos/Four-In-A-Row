@@ -14,7 +14,7 @@ namespace FourInARow
             string line;
             
             Board board = new Board();
-            IStrategy strategy = new BasicStrategy();
+            IStrategy strategy = new Basic();
 
             while ((line = Console.ReadLine()) != null)
             {
@@ -28,7 +28,8 @@ namespace FourInARow
                         switch (parts[1])
                         {
                             case "your_botid":
-                                board.SetMyBotId(int.Parse(parts[2]));
+                                int myBotId = int.Parse(parts[2]);
+                                board.SetMyBotId(myBotId);
                                 break;
                             case "field_columns":
                                 board.SetColumnsLength(int.Parse(parts[2]));

@@ -2,11 +2,11 @@
 
 namespace FourInARow.Strategies
 {
-    public class BasicStrategy : IStrategy
+    public class Basic : IStrategy
     {
         Random r;
         
-        public BasicStrategy()
+        public Basic()
         {
             r = new Random();
         }

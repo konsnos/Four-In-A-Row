@@ -37,6 +37,7 @@ namespace FourInARow.Strategies
         /// <returns>Column to place for a win or avoid loss. -1 if there is no imminent win or loss.</returns>
         private int checkColsForWins(Board board)
         {
+            // First check wins
             for (int c = 0; c < board.ColsLength; c++)
             {
                 int r = board.GetColumnHeight(c);
@@ -48,8 +49,16 @@ namespace FourInARow.Strategies
                             Console.WriteLine("Win at {0} column", c);
                         return c;
                     }
-                    
-                    if(checkWinMove(board, FieldState.Opponent, r, c))
+                }
+            }
+
+            // Check for loss
+            for (int c = 0; c < board.ColsLength; c++)
+            {
+                int r = board.GetColumnHeight(c);
+                if (r != -1)
+                {
+                    if (checkWinMove(board, FieldState.Opponent, r, c))
                     {
                         if (GlobalVars.PRINT_DEBUG)
                             Console.WriteLine("Block at {0} column", c);
@@ -57,7 +66,7 @@ namespace FourInARow.Strategies
                     }
                 }
             }
-            
+
             return -1;
         }
         

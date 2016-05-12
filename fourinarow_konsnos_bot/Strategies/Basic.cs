@@ -30,6 +30,16 @@ namespace FourInARow.Strategies
             return col;
         }
 
+        public void UpdateBoardSize(Board board)
+        {
+            // Do nothing
+        }
+
+        public void UpdateSelfBotId(int newMyBotId)
+        {
+            // do nothing
+        }
+
         /// <summary>
         /// Checks every column if me or the opponent will win.
         /// </summary>

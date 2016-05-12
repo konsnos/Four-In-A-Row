@@ -14,6 +14,13 @@ namespace FourInARow
         /// <summary> Rows column. Starts from top. </summary>
         public int RowsLength {get;private set;}
 
+        public Board()
+        {
+            // Initialise variables.
+            ColsLength = 0;
+            RowsLength = 0;
+        }
+
         public void SetMyBotId(int myBotId)
         {
             MyBotId = myBotId;
@@ -65,7 +72,7 @@ namespace FourInARow
         /// <returns>FieldState enum of Free, Me, or Opponent.</returns>
         public FieldState GetState(int col, int row)
         {
-            if (BoardArray[row][col] == 0) 
+            if (BoardArray[row][col] == 0)
                 return FieldState.Free;
             if (BoardArray[row][col] == MyBotId) 
                 return FieldState.Me;

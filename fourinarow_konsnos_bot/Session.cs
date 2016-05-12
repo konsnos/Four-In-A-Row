@@ -14,7 +14,8 @@ namespace FourInARow
             string line;
             
             Board board = new Board();
-            IStrategy strategy = new Basic();
+            //IStrategy strategy = new Basic();
+            IStrategy strategy = new PatternSearch();
 
             while ((line = Console.ReadLine()) != null)
             {
@@ -30,12 +31,15 @@ namespace FourInARow
                             case "your_botid":
                                 int myBotId = int.Parse(parts[2]);
                                 board.SetMyBotId(myBotId);
+                                strategy.UpdateSelfBotId(myBotId);
                                 break;
                             case "field_columns":
                                 board.SetColumnsLength(int.Parse(parts[2]));
+                                strategy.UpdateBoardSize(board);
                                 break;
                             case "field_rows":
                                 board.SetRowsLength(int.Parse(parts[2]));
+                                strategy.UpdateBoardSize(board);
                                 break;
                         }
                         break;

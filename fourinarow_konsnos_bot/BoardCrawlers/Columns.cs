@@ -9,19 +9,25 @@
     /// </example>
     class Columns : IBoardCrawler
     {
-        public int[] GetBoard(Board board)
-        {
-            int[] cols = new int[board.RowsLength * (board.ColsLength + 1)];
+        public int[] BoardLine { get; private set; }
 
+        public Columns(int rowsLength, int colsLength)
+        {
+            BoardLine = new int[rowsLength * (colsLength + 1)];
+
+            for(int r = rowsLength;r<BoardLine.Length;r+= (rowsLength + 1))
+                BoardLine[r] = int.MaxValue; // new lines
+        }
+
+        public void CreateBoard(Board board)
+        {
             int count = 0;
             for (int c = 0; c < board.ColsLength; c++)
             {
                 for (int r = 0; r < board.RowsLength; r++)
-                    cols[count++] = board.BoardArray[r][c];
-                cols[count++] = int.MaxValue;    // new line
+                    BoardLine[count++] = board.BoardArray[r][c];
+                count++;    // new line is assigned
             }
-
-            return cols;
         }
 
         public int[] GetPos(int index, int rowsLength, int colsLength)

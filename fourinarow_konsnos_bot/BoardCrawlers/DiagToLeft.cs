@@ -15,7 +15,7 @@ namespace FourInARow.BoardCrawlers
     /// </example>
     class DiagToLeft : IBoardCrawler
     {
-        public int[] GetBoard(Board board)
+        public void CreateBoard(Board board)
         {
             int[] diags = new int[(board.RowsLength * board.ColsLength) + board.RowsLength + board.ColsLength - 1];
 
@@ -46,8 +46,6 @@ namespace FourInARow.BoardCrawlers
                 }
                 diags[count++] = int.MaxValue;
             }
-
-            return diags;
         }
 
         public int[] GetPos(int index, int rowsLength, int colsLength)

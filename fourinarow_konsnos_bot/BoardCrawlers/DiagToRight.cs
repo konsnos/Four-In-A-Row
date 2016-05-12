@@ -15,45 +15,75 @@ namespace FourInARow.BoardCrawlers
     /// </example>
     class DiagToRight : IBoardCrawler
     {
-        public int[] GetBoard(Board board)
-        {
-            int[] diags = new int[(board.RowsLength * board.ColsLength) + board.RowsLength + board.ColsLength - 1];
+        public int[] BoardLine { get; private set; }
+        /// <summary>
+        /// Initial row to start assigning indexes.
+        /// </summary>
+        private int initR = 3;
+        private int lastCol;
+        /// <summary>
+        /// The line length of each diagonal. Each line should always reach this length in order to easily calculate the position of an index.
+        /// </summary>
+        private int lineLength;
 
+        public DiagToRight(int rowsLength, int colsLength)
+        {
+            lastCol = colsLength - 3;
+            lineLength = rowsLength + 1;
+            BoardLine = new int[((rowsLength - initR) + (colsLength - lastCol) - 1) * lineLength];
+        }
+
+        public void CreateBoard(Board board)
+        {
             int count = 0;
-            for(int r = 0;r<board.RowsLength;r++)
+            for(int r = initR;r<board.RowsLength;r++)
             {
+                int curLineLength = 0;
                 for(int c = 0;c<board.ColsLength;c++)
                 {
                     int r_b = r - c;
                     if (r_b > -1)
-                        diags[count++] = board.BoardArray[r_b][c];
+                    {
+                        BoardLine[count++] = board.BoardArray[r_b][c];
+                        curLineLength++;
+                    }
                     else
+                    {
                         break;
+                    }
                 }
-                diags[count++] = int.MaxValue;
+
+                for (; curLineLength < lineLength; curLineLength++)
+                    BoardLine[count++] = int.MaxValue;  // Fill up line length
+
+                BoardLine[count++] = int.MaxValue;
             }
 
             int maxR = board.RowsLength - 1;
-            for(int c = 1;c<board.ColsLength;c++)
+            for(int c = 1;c<lastCol;c++)
             {
+                int curLineLength = 0;
                 for(int c_b = c;c_b<board.ColsLength;c_b++)
                 {
                     int r_b = maxR - (c-c_b);
                     if (r_b > -1)
-                        diags[count++] = board.BoardArray[r_b][c_b];
+                        BoardLine[count++] = board.BoardArray[r_b][c_b];
                     else
                         break;
                 }
-                diags[count++] = int.MaxValue;
-            }
+                for (; curLineLength < lineLength; curLineLength++)
+                    BoardLine[count++] = int.MaxValue;  // Fill up line length
 
-            return diags;
+                BoardLine[count++] = int.MaxValue;
+            }
         }
 
 
         public int[] GetPos(int index, int rowsLength, int colsLength)
         {
-            int count = 0;
+
+
+            /*int count = 0;
             for (int r = 0; r < rowsLength; r++)
             {
                 for (int c = 0; c < colsLength; c++)
@@ -87,7 +117,7 @@ namespace FourInARow.BoardCrawlers
                 count++;
             }
 
-            throw new IndexOutOfRangeException("Index " + index + " is out of range.");
+            throw new IndexOutOfRangeException("Index " + index + " is out of range.");*/
         }
     }
 }

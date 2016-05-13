@@ -15,7 +15,7 @@ namespace FourInARow.BoardCrawlers
     /// </example>
     class DiagToRight : IBoardCrawler
     {
-        public int[] BoardLine { get; private set; }
+        public int[] boardLine { get; private set; }
         /// <summary>
         /// Initial row to start assigning indexes.
         /// </summary>
@@ -30,7 +30,7 @@ namespace FourInARow.BoardCrawlers
         {
             lastCol = colsLength - 3;
             lineLength = rowsLength + 1;
-            BoardLine = new int[((rowsLength - initR) + (colsLength - lastCol) - 1) * lineLength];
+            boardLine = new int[((rowsLength - initR) + (colsLength - lastCol)) * lineLength];
         }
 
         public void CreateBoard(Board board)
@@ -44,19 +44,15 @@ namespace FourInARow.BoardCrawlers
                     int r_b = r - c;
                     if (r_b > -1)
                     {
-                        BoardLine[count++] = board.BoardArray[r_b][c];
+                        boardLine[count++] = board.BoardArray[r_b][c];
                         curLineLength++;
                     }
                     else
-                    {
                         break;
-                    }
                 }
 
                 for (; curLineLength < lineLength; curLineLength++)
-                    BoardLine[count++] = int.MaxValue;  // Fill up line length
-
-                BoardLine[count++] = int.MaxValue;
+                    boardLine[count++] = GlobalVars.PATTERN_BREAKER;  // Fill up line length
             }
 
             int maxR = board.RowsLength - 1;
@@ -65,59 +61,33 @@ namespace FourInARow.BoardCrawlers
                 int curLineLength = 0;
                 for(int c_b = c;c_b<board.ColsLength;c_b++)
                 {
-                    int r_b = maxR - (c-c_b);
+                    int r_b = maxR - (c_b-c);
                     if (r_b > -1)
-                        BoardLine[count++] = board.BoardArray[r_b][c_b];
+                    {
+                        boardLine[count++] = board.BoardArray[r_b][c_b];
+                        curLineLength++;
+                    }
                     else
                         break;
                 }
                 for (; curLineLength < lineLength; curLineLength++)
-                    BoardLine[count++] = int.MaxValue;  // Fill up line length
-
-                BoardLine[count++] = int.MaxValue;
+                    boardLine[count++] = GlobalVars.PATTERN_BREAKER;  // Fill up line length
             }
         }
 
-
         public int[] GetPos(int index, int rowsLength, int colsLength)
         {
+            int diagonalCount = index / lineLength;
+            int diagonalRest = index % lineLength;
+            int column = (lastCol - rowsLength) + diagonalCount + 1;
+            int realColumn = ((column < 0) ? 0: column) + diagonalRest;
+            int row = (column < 0) ? rowsLength - 1 + column - diagonalRest : rowsLength - 1 - diagonalRest;
+            return new int[] { row, realColumn };
+        }
 
-
-            /*int count = 0;
-            for (int r = 0; r < rowsLength; r++)
-            {
-                for (int c = 0; c < colsLength; c++)
-                {
-                    int r_b = r - c;
-                    if (r_b > -1)
-                    {
-                        if (++count == index)
-                            return new int[] { r_b, c };
-                    }
-                    else
-                        break;
-                }
-                count++;
-            }
-
-            int maxR = rowsLength - 1;
-            for (int c = 1; c < colsLength; c++)
-            {
-                for (int c_b = c; c_b < colsLength; c_b++)
-                {
-                    int r_b = maxR - (c - c_b);
-                    if (r_b > -1)
-                    {
-                        if (++count == index)
-                            return new int[] { r_b, c_b };
-                    }
-                    else
-                        break;
-                }
-                count++;
-            }
-
-            throw new IndexOutOfRangeException("Index " + index + " is out of range.");*/
+        public int[] GetBoard()
+        {
+            return boardLine;
         }
     }
 }

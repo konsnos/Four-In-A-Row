@@ -14,6 +14,11 @@ namespace FourInARow.BoardCrawlers
         /// <param name="board"></param>
         void CreateBoard(Board board);
         /// <summary>
+        /// Returns the created board.
+        /// </summary>
+        /// <returns></returns>
+        int[] GetBoard();
+        /// <summary>
         /// Returns the row and column of an index from the single dimensinal array this class generated.
         /// </summary>
         /// <param name="index"></param>

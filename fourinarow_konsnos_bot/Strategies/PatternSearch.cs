@@ -14,6 +14,8 @@ namespace FourInARow.Strategies
 
         private IBoardCrawler rows;
         private IBoardCrawler columns;
+        private IBoardCrawler diagToRight;
+        private IBoardCrawler diagToLeft;
 
         public PatternSearch()
         {
@@ -29,7 +31,7 @@ namespace FourInARow.Strategies
             winPatterns = createPatternWithId(newMyBotId);
             lossPatterns = createPatternWithId((newMyBotId == 1) ? 2 : 1);
 
-            offsetIndexes = new int[] { 0, 1, 2, 3, 2, 3 };
+            offsetIndexes = new int[] { 0, 1, 2, 3, 1, 3 };
         }
 
         public void UpdateBoardSize(Board board)
@@ -38,6 +40,8 @@ namespace FourInARow.Strategies
             {
                 rows = new Rows(board.RowsLength, board.ColsLength);
                 columns = new Columns(board.RowsLength, board.ColsLength);
+                diagToRight = new DiagToRight(board.RowsLength, board.ColsLength);
+                diagToLeft = new DiagToLeft(board.RowsLength, board.ColsLength);
 
                 if (GlobalVars.PRINT_DEBUG)
                     Console.WriteLine("Crawlers initialised.");
@@ -74,6 +78,8 @@ namespace FourInARow.Strategies
 
             rows.CreateBoard(board);
             columns.CreateBoard(board);
+            diagToRight.CreateBoard(board);
+            diagToLeft.CreateBoard(board);
 
             col = checkWinningMoves(board);
             if (col == -1)
@@ -90,9 +96,36 @@ namespace FourInARow.Strategies
         {
             int[] boardPos;
             int offsettedIndex;
+
+
+            // Get boards to traverse.
+            int[] rowsBoard = rows.GetBoard();
+            int[] colsBoard = columns.GetBoard();
+            int[] diagToRightBoard = diagToRight.GetBoard();
+            int[] diagToLeftBoard = diagToLeft.GetBoard();
+
+            if(GlobalVars.PRINT_DEBUG)
+            {
+                Console.WriteLine();
+
+                Console.WriteLine("Rows");
+                Console.WriteLine(string.Join("", rowsBoard));
+
+                Console.WriteLine("Columns");
+                Console.WriteLine(string.Join("", colsBoard));
+
+                Console.WriteLine("Diag to Right");
+                Console.WriteLine(string.Join("", diagToRightBoard));
+
+                Console.WriteLine("Diag to Left");
+                Console.WriteLine(string.Join("", diagToLeftBoard));
+
+                Console.WriteLine();
+            }
+
             for(int i = 0;i<winPatterns.Length;i++)
             {
-                foreach (var pos in rows.Board.Locate(winPatterns[i]))
+                foreach (int pos in rowsBoard.Locate(winPatterns[i]))
                 {
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from row at index: " + pos);
@@ -102,7 +135,7 @@ namespace FourInARow.Strategies
                     return boardPos[1];
                 }
 
-                foreach (var pos in columns.Board.Locate(winPatterns[i]))
+                foreach (int pos in colsBoard.Locate(winPatterns[i]))
                 {
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from column at index: " + pos);
@@ -111,11 +144,31 @@ namespace FourInARow.Strategies
                     boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
                     return boardPos[1];
                 }
+
+                foreach(int pos in diagToRightBoard.Locate(winPatterns[i]))
+                {
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from diag to right at index: " + pos);
+
+                    offsettedIndex = offsetIndexes[i] + pos;
+                    boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    return boardPos[1];
+                }
+
+                foreach (int pos in diagToLeftBoard.Locate(winPatterns[i]))
+                {
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from diag to right at index: " + pos);
+
+                    offsettedIndex = offsetIndexes[i] + pos;
+                    boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    return boardPos[1];
+                }
             }
 
             for (int i = 0; i < lossPatterns.Length; i++)
             {
-                foreach (var pos in rows.Board.Locate(lossPatterns[i]))
+                foreach (int pos in rowsBoard.Locate(lossPatterns[i]))
                 {
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Loss found from row at index: " + pos);
@@ -125,13 +178,33 @@ namespace FourInARow.Strategies
                     return boardPos[1];
                 }
 
-                foreach (var pos in columns.Board.Locate(lossPatterns[i]))
+                foreach (int pos in colsBoard.Locate(lossPatterns[i]))
                 {
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Loss found from column at index: " + pos);
 
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    return boardPos[1];
+                }
+                
+                foreach (int pos in diagToRightBoard.Locate(lossPatterns[i]))
+                {
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from diag to right at index: " + pos);
+
+                    offsettedIndex = offsetIndexes[i] + pos;
+                    boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    return boardPos[1];
+                }
+
+                foreach (int pos in diagToLeftBoard.Locate(lossPatterns[i]))
+                {
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from diag to left at index: " + pos);
+
+                    offsettedIndex = offsetIndexes[i] + pos;
+                    boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
                     return boardPos[1];
                 }
             }

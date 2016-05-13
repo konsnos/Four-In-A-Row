@@ -10,14 +10,14 @@ namespace FourInARow.BoardCrawlers
     /// </example>
     class Rows : IBoardCrawler
     {
-        public int[] BoardLine { get; private set; }
+        public int[] boardLine { get; private set; }
 
         public Rows(int rowsLength, int colsLength)
         {
-            BoardLine = new int[(rowsLength + 1) * colsLength];
+            boardLine = new int[(rowsLength + 1) * colsLength];
 
-            for(int c = colsLength;c<BoardLine.Length;c+= (colsLength + 1))
-                BoardLine[c] = int.MaxValue; // new lines
+            for(int c = colsLength;c<boardLine.Length;c+= (colsLength + 1))
+                boardLine[c] = GlobalVars.PATTERN_BREAKER; // new lines
         }
 
         public void CreateBoard(Board board)
@@ -26,7 +26,7 @@ namespace FourInARow.BoardCrawlers
             for (int r = 0; r < board.RowsLength; r++)
             {
                 for (int c = 0; c < board.ColsLength; c++)
-                    BoardLine[count++] = board.BoardArray[r][c];
+                    boardLine[count++] = board.BoardArray[r][c];
                 count++;    // new line is already set
             }
         }
@@ -34,6 +34,11 @@ namespace FourInARow.BoardCrawlers
         public int[] GetPos(int index, int rowsLength, int colsLength)
         {
             return new int[] { index / (colsLength + 1), index % (colsLength + 1)};
+        }
+
+        public int[] GetBoard()
+        {
+            return boardLine;
         }
     }
 }

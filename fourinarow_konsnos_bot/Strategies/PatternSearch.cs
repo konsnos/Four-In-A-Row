@@ -19,6 +19,9 @@ namespace FourInARow.Strategies
 
         private float[] probabilities;
 
+        private const float PROB_SURE_MOVE = 2f;
+        private const float PROB_SURE_AVOID = -2f;
+
         public PatternSearch()
         {
             r = new Random();
@@ -167,7 +170,7 @@ namespace FourInARow.Strategies
 
             for(int c = 0;c<probabilities.Length;c++)
             {
-                if(probabilities[c] != 1f && probabilities[c] != -1f)
+                if(probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
                 {
                     probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
                 }
@@ -191,9 +194,9 @@ namespace FourInARow.Strategies
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
-                                probabilities[c] = 1f;   // Certain win!
+                                probabilities[c] = PROB_SURE_MOVE;   // Certain win!
                             else if (difference == 1)
-                                probabilities[c] = -1f;   // Avoid putting in here because the opponent will cover the win.
+                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
                             else
                                 probabilities[c] = 0.2f;
                             lowerEnds[c] = pos[0];
@@ -210,9 +213,9 @@ namespace FourInARow.Strategies
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
-                                probabilities[c] = 1f;   // Avoid certain loss
+                                probabilities[c] = PROB_SURE_MOVE;   // Avoid certain loss
                             else if (difference == 1)
-                                probabilities[c] = -1f;   // Avoid putting in here because the opponent will have a certain win.
+                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will have a certain win.
                             else
                                 probabilities[c] = 0f;
                             lowerEnds[c] = pos[0];

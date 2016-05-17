@@ -179,9 +179,17 @@ namespace FourInARow.Strategies
 
         private void udpateProbabilities(Board board, List<int[]> winPoss, List<int[]> lossPoss)
         {
-            int[] lowerEnds = new int[board.ColsLength];
+            int[] loswestAssignment = new int[board.ColsLength];
             for (int c = 0; c < board.ColsLength; c++)
-                lowerEnds[c] = 0;
+            {
+                if (board.ColsHeights[c] == Board.COLUMN_FULL)  // If column is full
+                {
+                    loswestAssignment[c] = board.RowsLength;    // Don't allow further calculation of this row.
+                    probabilities[c] = PROB_SURE_AVOID;
+                }
+                else
+                    loswestAssignment[c] = 0;
+            }
 
             for(int c = 0;c<board.ColsLength;c++)
             {
@@ -190,7 +198,7 @@ namespace FourInARow.Strategies
                 {
                     if(pos[1] == c) // if in same column
                     {
-                        if(pos[0] > lowerEnds[c])   // if more important than last found.
+                        if(pos[0] > loswestAssignment[c])   // if more important than last found.
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
@@ -199,7 +207,7 @@ namespace FourInARow.Strategies
                                 probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
                             else
                                 probabilities[c] = 0.2f;
-                            lowerEnds[c] = pos[0];
+                            loswestAssignment[c] = pos[0];
                         }
                     }
                 }
@@ -209,7 +217,7 @@ namespace FourInARow.Strategies
                 {
                     if(pos[1] == c) // if in same column
                     {
-                        if(pos[0] > lowerEnds[c])   // if more important than last found.
+                        if(pos[0] > loswestAssignment[c])   // if more important than last found.
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
@@ -218,7 +226,7 @@ namespace FourInARow.Strategies
                                 probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will have a certain win.
                             else
                                 probabilities[c] = 0f;
-                            lowerEnds[c] = pos[0];
+                            loswestAssignment[c] = pos[0];
                         }
                     }
                 }
@@ -234,6 +242,17 @@ namespace FourInARow.Strategies
             }
         }
 
+        /// <summary>
+        /// Checks all the rows given for the pattern given and returns the winning moves.
+        /// </summary>
+        /// <param name="patterns"></param>
+        /// <param name="rowsBoard"></param>
+        /// <param name="colsBoard"></param>
+        /// <param name="diagToRightBoard"></param>
+        /// <param name="diagToLeftBoard"></param>
+        /// <param name="rowsLength"></param>
+        /// <param name="colsLength"></param>
+        /// <returns></returns>
         private List<int[]> checkWinningPositions(int[][] patterns, int[] rowsBoard, int[] colsBoard, int[] diagToRightBoard, int[] diagToLeftBoard, int rowsLength, int colsLength)
         {
             List<int[]> winningMoves = new List<int[]>();

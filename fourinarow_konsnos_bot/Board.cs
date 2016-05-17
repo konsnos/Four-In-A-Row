@@ -16,6 +16,8 @@ namespace FourInARow
         /// <summary> Heights of columns. </summary>
         public int[] ColsHeights { get; private set; }
 
+        public const int COLUMN_FULL = -1;
+
         public Board()
         {
             // Initialise variables.
@@ -67,7 +69,7 @@ namespace FourInARow
                     return row;
             }
             
-            return -1;
+            return COLUMN_FULL;
         }
 
 

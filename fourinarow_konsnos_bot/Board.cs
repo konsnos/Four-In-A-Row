@@ -31,6 +31,8 @@ namespace FourInARow
         public void SetColumnsLength(int newColsLength)
         {
             ColsLength = newColsLength;
+            // Initialize column heights.
+            ColsHeights = new int[ColsLength];
         }
 
         public void SetRowsLength(int newRowsLength)

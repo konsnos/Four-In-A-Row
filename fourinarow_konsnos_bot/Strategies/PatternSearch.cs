@@ -17,6 +17,8 @@ namespace FourInARow.Strategies
         private IBoardCrawler diagToRight;
         private IBoardCrawler diagToLeft;
 
+        private float[] probabilities;
+
         public PatternSearch()
         {
             r = new Random();
@@ -42,6 +44,8 @@ namespace FourInARow.Strategies
                 columns = new Columns(board.RowsLength, board.ColsLength);
                 diagToRight = new DiagToRight(board.RowsLength, board.ColsLength);
                 diagToLeft = new DiagToLeft(board.RowsLength, board.ColsLength);
+
+                probabilities = new float[board.ColsLength];
 
                 if (GlobalVars.PRINT_DEBUG)
                     Console.WriteLine("Crawlers initialised.");
@@ -76,34 +80,21 @@ namespace FourInARow.Strategies
         {
             int col;
 
+            for (int i = 0; i < probabilities.Length; i++)
+                probabilities[i] = 0;
+
             rows.CreateBoard(board);
             columns.CreateBoard(board);
             diagToRight.CreateBoard(board);
             diagToLeft.CreateBoard(board);
 
-            col = checkWinningMoves(board);
-            if (col == -1)
-            {
-                do
-                {
-                    col = r.Next(board.ColsLength);
-                } while (!board.CheckIfValid(col));
-            }
-            return col;
-        }
-
-        private int checkWinningMoves(Board board)
-        {
-            int[] boardPos;
-            int offsettedIndex;
-            
-            // Get boards to traverse.
+            // Get boards to traverse
             int[] rowsBoard = rows.GetBoard();
             int[] colsBoard = columns.GetBoard();
             int[] diagToRightBoard = diagToRight.GetBoard();
             int[] diagToLeftBoard = diagToLeft.GetBoard();
-
-            if(GlobalVars.PRINT_DEBUG)
+            
+            if (GlobalVars.PRINT_DEBUG)
             {
                 Console.WriteLine();
 
@@ -122,102 +113,175 @@ namespace FourInARow.Strategies
                 Console.WriteLine();
             }
 
-            for(int i = 0;i<winPatterns.Length;i++)
+            if (GlobalVars.PRINT_DEBUG)
+                Console.WriteLine("Check for wins");
+            List<int[]> winPositions = checkWinningPositions(winPatterns, rowsBoard, colsBoard, diagToRightBoard, diagToLeftBoard, board.RowsLength, board.ColsLength);
+            if (GlobalVars.PRINT_DEBUG)
+                Console.WriteLine("Check for losses");
+            List<int[]> lossPositions = checkWinningPositions(lossPatterns, rowsBoard, colsBoard, diagToRightBoard, diagToLeftBoard, board.RowsLength, board.ColsLength);
+
+            udpateProbabilities(board, winPositions, lossPositions);
+            randomizeProbabilities();
+            col = getBestMove();
+
+            if (col == -1)
             {
-                foreach (int pos in rowsBoard.Locate(winPatterns[i]))
+                do
+                {
+                    col = r.Next(board.ColsLength);
+                } while (!board.CheckIfValid(col));
+            }
+            return col;
+        }
+
+        /// <summary>
+        /// Search for the highest probability to pick as move.
+        /// </summary>
+        /// <returns></returns>
+        private int getBestMove()
+        {
+            int bestColumn = -1;
+
+            for(int c = 0;c<probabilities.Length;c++)
+            {
+                if(bestColumn == -1)
+                {
+                    if (probabilities[c] >= 0f)
+                        bestColumn = c;
+                }
+                else
+                {
+                    if (probabilities[c] > probabilities[bestColumn])
+                        bestColumn = c;
+                }
+            }
+
+            return bestColumn;
+        }
+
+
+        private void randomizeProbabilities()
+        {
+            const int probabilityAmount = 3000;
+            const float turnToFloat = 10000f;
+
+            for(int c = 0;c<probabilities.Length;c++)
+            {
+                if(probabilities[c] != 1f && probabilities[c] != -1f)
+                {
+                    probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
+                }
+            }
+        }
+
+        private void udpateProbabilities(Board board, List<int[]> winPoss, List<int[]> lossPoss)
+        {
+            int[] lowerEnds = new int[board.ColsLength];
+            for (int c = 0; c < board.ColsLength; c++)
+                lowerEnds[c] = 0;
+
+            for(int c = 0;c<board.ColsLength;c++)
+            {
+                // Alter to win probabilities
+                foreach(int[] pos in winPoss)
+                {
+                    if(pos[1] == c) // if in same column
+                    {
+                        if(pos[0] > lowerEnds[c])   // if more important than last found.
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] = 1f;   // Certain win!
+                            else if (difference == 1)
+                                probabilities[c] = -1f;   // Avoid putting in here because the opponent will cover the win.
+                            else
+                                probabilities[c] = 0.2f;
+                            lowerEnds[c] = pos[0];
+                        }
+                    }
+                }
+
+                // Alter to loose probabilities
+                foreach(int[] pos in lossPoss)
+                {
+                    if(pos[1] == c) // if in same column
+                    {
+                        if(pos[0] > lowerEnds[c])   // if more important than last found.
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] = 1f;   // Avoid certain loss
+                            else if (difference == 1)
+                                probabilities[c] = -1f;   // Avoid putting in here because the opponent will have a certain win.
+                            else
+                                probabilities[c] = 0f;
+                            lowerEnds[c] = pos[0];
+                        }
+                    }
+                }
+            }
+
+            if(GlobalVars.PRINT_DEBUG)
+            {
+                Console.WriteLine("Probabilities");
+
+                for (int c = 0; c < board.ColsLength; c++)
+                    Console.Write("{0},", probabilities[c]);
+                Console.WriteLine();
+            }
+        }
+
+        private List<int[]> checkWinningPositions(int[][] patterns, int[] rowsBoard, int[] colsBoard, int[] diagToRightBoard, int[] diagToLeftBoard, int rowsLength, int colsLength)
+        {
+            List<int[]> winningMoves = new List<int[]>();
+            int[] boardPos;
+            int offsettedIndex;
+
+            for(int i = 0;i< patterns.Length;i++)
+            {
+                foreach (int pos in rowsBoard.Locate(patterns[i]))
                 {
                     offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = rows.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    boardPos = rows.GetPos(offsettedIndex, rowsLength, colsLength);
+                    winningMoves.Add(boardPos);
 
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from row at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
                 }
 
-                foreach (int pos in colsBoard.Locate(winPatterns[i]))
+                foreach (int pos in colsBoard.Locate(patterns[i]))
                 {
                     offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    boardPos = columns.GetPos(offsettedIndex, rowsLength, colsLength);
+                    winningMoves.Add(boardPos);
 
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from column at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
                 }
 
-                foreach(int pos in diagToRightBoard.Locate(winPatterns[i]))
+                foreach(int pos in diagToRightBoard.Locate(patterns[i]))
                 {
 
                     offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    boardPos = diagToRight.GetPos(offsettedIndex, rowsLength, colsLength);
+                    winningMoves.Add(boardPos);
 
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
                 }
 
-                foreach (int pos in diagToLeftBoard.Locate(winPatterns[i]))
+                foreach (int pos in diagToLeftBoard.Locate(patterns[i]))
                 {
                     offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    boardPos = diagToLeft.GetPos(offsettedIndex, rowsLength, colsLength);
+                    winningMoves.Add(boardPos);
 
                     if (GlobalVars.PRINT_DEBUG)
                         Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
                 }
             }
 
-            for (int i = 0; i < lossPatterns.Length; i++)
-            {
-                foreach (int pos in rowsBoard.Locate(lossPatterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = rows.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from row at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
-                }
-
-                foreach (int pos in colsBoard.Locate(lossPatterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from column at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
-                }
-                
-                foreach (int pos in diagToRightBoard.Locate(lossPatterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
-                    
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
-                }
-
-                foreach (int pos in diagToLeftBoard.Locate(lossPatterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from diag to left at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-
-                    return boardPos[1];
-                }
-            }
-
-            return -1;
+            return winningMoves;
         }
     }
 }

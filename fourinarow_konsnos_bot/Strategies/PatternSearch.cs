@@ -69,6 +69,7 @@ namespace FourInARow.Strategies
                 new int[] { id, id, 0, id },
                 new int[] { id, id, id, 0 },
 
+                //TODO: Lower importance.
                 new int[] { 0, 0, id, id, 0 },  // Offset might have two possible indexes
                 new int[] { 0, id, id, 0, 0 }   // Offset might have two possible indexes
             };

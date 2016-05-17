@@ -11,9 +11,6 @@ namespace FourInARow.Strategies
 
         Patterns playerPatterns;
         Patterns opponentPatterns;
-        int[][] winPatterns;
-        int[][] lossPatterns;
-        int[] offsetIndexes;
 
         private IBoardCrawler rows;
         private IBoardCrawler columns;
@@ -38,11 +35,6 @@ namespace FourInARow.Strategies
         {
             playerPatterns = new Patterns(newMyBotId);
             opponentPatterns = new Patterns((newMyBotId == 1) ? 2 : 1);
-
-            winPatterns = createPatternWithId(newMyBotId);
-            lossPatterns = createPatternWithId((newMyBotId == 1) ? 2 : 1);
-
-            offsetIndexes = new int[] { 0, 1, 2, 3, 1, 3 };
         }
 
         public void UpdateBoardSize(Board board)

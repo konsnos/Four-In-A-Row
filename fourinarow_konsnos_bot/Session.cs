@@ -15,7 +15,7 @@ namespace FourInARow
             
             Board board = new Board();
             //IStrategy strategy = new Basic();
-            IStrategy strategy = new PatternSearch();
+            IStrategy strategy = new PatternSearchStrategy();
 
             while ((line = Console.ReadLine()) != null)
             {

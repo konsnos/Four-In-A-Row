@@ -1,13 +1,16 @@
 ﻿using FourInARow.BoardCrawlers;
+using FourInARow.Strategies.PatternSearch;
 using System;
 using System.Collections.Generic;
 
 namespace FourInARow.Strategies
 {
-    class PatternSearch : IStrategy
+    class PatternSearchStrategy : IStrategy
     {
         Random r;
 
+        Patterns playerPatterns;
+        Patterns opponentPatterns;
         int[][] winPatterns;
         int[][] lossPatterns;
         int[] offsetIndexes;
@@ -22,7 +25,7 @@ namespace FourInARow.Strategies
         private const float PROB_SURE_MOVE = 2f;
         private const float PROB_SURE_AVOID = -2f;
 
-        public PatternSearch()
+        public PatternSearchStrategy()
         {
             r = new Random();
         }
@@ -33,6 +36,9 @@ namespace FourInARow.Strategies
         /// <param name="newMyBotId"></param>
         public void UpdateSelfBotId(int newMyBotId)
         {
+            playerPatterns = new Patterns(newMyBotId);
+            opponentPatterns = new Patterns((newMyBotId == 1) ? 2 : 1);
+
             winPatterns = createPatternWithId(newMyBotId);
             lossPatterns = createPatternWithId((newMyBotId == 1) ? 2 : 1);
 
@@ -119,10 +125,10 @@ namespace FourInARow.Strategies
 
             if (GlobalVars.PRINT_DEBUG)
                 Console.WriteLine("Check for wins");
-            List<int[]> winPositions = checkWinningPositions(winPatterns, rowsBoard, colsBoard, diagToRightBoard, diagToLeftBoard, board.RowsLength, board.ColsLength);
+            List<int[]> winPositions = playerPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
             if (GlobalVars.PRINT_DEBUG)
                 Console.WriteLine("Check for losses");
-            List<int[]> lossPositions = checkWinningPositions(lossPatterns, rowsBoard, colsBoard, diagToRightBoard, diagToLeftBoard, board.RowsLength, board.ColsLength);
+            List<int[]> lossPositions = opponentPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
 
             udpateProbabilities(board, winPositions, lossPositions);
             randomizeProbabilities();
@@ -241,70 +247,6 @@ namespace FourInARow.Strategies
                     Console.Write("{0},", probabilities[c]);
                 Console.WriteLine();
             }
-        }
-
-        /// <summary>
-        /// Checks all the rows given for the pattern given and returns the winning moves.
-        /// </summary>
-        /// <param name="patterns"></param>
-        /// <param name="rowsBoard"></param>
-        /// <param name="colsBoard"></param>
-        /// <param name="diagToRightBoard"></param>
-        /// <param name="diagToLeftBoard"></param>
-        /// <param name="rowsLength"></param>
-        /// <param name="colsLength"></param>
-        /// <returns></returns>
-        private List<int[]> checkWinningPositions(int[][] patterns, int[] rowsBoard, int[] colsBoard, int[] diagToRightBoard, int[] diagToLeftBoard, int rowsLength, int colsLength)
-        {
-            List<int[]> winningMoves = new List<int[]>();
-            int[] boardPos;
-            int offsettedIndex;
-
-            for(int i = 0;i< patterns.Length;i++)
-            {
-                foreach (int pos in rowsBoard.Locate(patterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = rows.GetPos(offsettedIndex, rowsLength, colsLength);
-                    winningMoves.Add(boardPos);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from row at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-                }
-
-                foreach (int pos in colsBoard.Locate(patterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = columns.GetPos(offsettedIndex, rowsLength, colsLength);
-                    winningMoves.Add(boardPos);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from column at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-                }
-
-                foreach(int pos in diagToRightBoard.Locate(patterns[i]))
-                {
-
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToRight.GetPos(offsettedIndex, rowsLength, colsLength);
-                    winningMoves.Add(boardPos);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-                }
-
-                foreach (int pos in diagToLeftBoard.Locate(patterns[i]))
-                {
-                    offsettedIndex = offsetIndexes[i] + pos;
-                    boardPos = diagToLeft.GetPos(offsettedIndex, rowsLength, colsLength);
-                    winningMoves.Add(boardPos);
-
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
-                }
-            }
-
-            return winningMoves;
         }
     }
 }

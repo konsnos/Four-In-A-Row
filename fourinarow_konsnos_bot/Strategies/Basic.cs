@@ -50,7 +50,7 @@ namespace FourInARow.Strategies
             // First check wins
             for (int c = 0; c < board.ColsLength; c++)
             {
-                int r = board.GetColumnHeight(c);
+                int r = board.ColsHeights[c];
                 if(r != -1)
                 {
                     if(checkWinMove(board, FieldState.Me, r, c))
@@ -65,7 +65,7 @@ namespace FourInARow.Strategies
             // Check for loss
             for (int c = 0; c < board.ColsLength; c++)
             {
-                int r = board.GetColumnHeight(c);
+                int r = board.ColsHeights[c];
                 if (r != -1)
                 {
                     if (checkWinMove(board, FieldState.Opponent, r, c))

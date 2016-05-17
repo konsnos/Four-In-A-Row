@@ -96,8 +96,7 @@ namespace FourInARow.Strategies
         {
             int[] boardPos;
             int offsettedIndex;
-
-
+            
             // Get boards to traverse.
             int[] rowsBoard = rows.GetBoard();
             int[] colsBoard = columns.GetBoard();

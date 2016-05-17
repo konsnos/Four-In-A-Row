@@ -13,6 +13,8 @@ namespace FourInARow
         public int ColsLength {get;private set;}
         /// <summary> Rows column. Starts from top. </summary>
         public int RowsLength {get;private set;}
+        /// <summary> Heights of columns. </summary>
+        public int[] ColsHeights { get; private set; }
 
         public Board()
         {
@@ -40,6 +42,10 @@ namespace FourInARow
         {
             BoardArray = boardArray;
 
+            // Calculate all column heights
+            for (int c = 0; c < ColsLength; c++)
+                ColsHeights[c] = getColumnHeight(c);
+
             if (GlobalVars.PRINT_DEBUG)
             {
                 Console.WriteLine();
@@ -51,7 +57,7 @@ namespace FourInARow
         /// Checks the next free row in a column and returns it. Returns the length of the column if full.
         /// </summary>
         /// <returns>-1 if column is full.</returns>
-        public int GetColumnHeight(int col)
+        private int getColumnHeight(int col)
         {
             for (int row = RowsLength - 1; row > -1; row--)
             {
@@ -85,7 +91,7 @@ namespace FourInARow
         /// <returns>True if the move is valid. False if not.</returns>
         public bool CheckIfValid(int dropCol)
         {
-            if (GetColumnHeight(dropCol) == -1)
+            if (getColumnHeight(dropCol) == -1)
             {
                 if (GlobalVars.PRINT_DEBUG)
                     Console.WriteLine("Invalid move at col {0} rejected", dropCol);

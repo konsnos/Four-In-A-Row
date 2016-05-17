@@ -79,7 +79,7 @@ namespace FourInARow.BoardCrawlers
         {
             int diagonalCount = index / lineLength;
             int diagonalRest = index % lineLength;
-            int column = (lastCol - rowsLength) + diagonalCount + 1;
+            int column = (initR - rowsLength) + diagonalCount + 1;
             int realColumn = ((column < 0) ? 0: column) + diagonalRest;
             int row = (column < 0) ? rowsLength - 1 + column - diagonalRest : rowsLength - 1 - diagonalRest;
             return new int[] { row, realColumn };

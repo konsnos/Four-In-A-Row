@@ -127,41 +127,46 @@ namespace FourInARow.Strategies
             {
                 foreach (int pos in rowsBoard.Locate(winPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from row at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = rows.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from row at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
 
                 foreach (int pos in colsBoard.Locate(winPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from column at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from column at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
 
                 foreach(int pos in diagToRightBoard.Locate(winPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from diag to right at index: " + pos);
 
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
 
                 foreach (int pos in diagToLeftBoard.Locate(winPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Win found from diag to right at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Win found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
             }
@@ -170,41 +175,45 @@ namespace FourInARow.Strategies
             {
                 foreach (int pos in rowsBoard.Locate(lossPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from row at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = rows.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from row at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
 
                 foreach (int pos in colsBoard.Locate(lossPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from column at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = columns.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from column at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
                 
                 foreach (int pos in diagToRightBoard.Locate(lossPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from diag to right at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = diagToRight.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+                    
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from diag to right at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
 
                 foreach (int pos in diagToLeftBoard.Locate(lossPatterns[i]))
                 {
-                    if (GlobalVars.PRINT_DEBUG)
-                        Console.WriteLine("Loss found from diag to left at index: " + pos);
-
                     offsettedIndex = offsetIndexes[i] + pos;
                     boardPos = diagToLeft.GetPos(offsettedIndex, board.RowsLength, board.ColsLength);
+
+                    if (GlobalVars.PRINT_DEBUG)
+                        Console.WriteLine("Loss found from diag to left at index: {0} and row,column: {1},{2}", pos, boardPos[0], boardPos[1]);
+
                     return boardPos[1];
                 }
             }

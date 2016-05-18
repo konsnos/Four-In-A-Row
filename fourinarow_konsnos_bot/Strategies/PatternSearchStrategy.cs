@@ -56,26 +56,6 @@ namespace FourInARow.Strategies
         }
 
         /// <summary>
-        /// Create patterns of imminent win.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private int[][] createPatternWithId(int id)
-        {
-            return new int[][]
-            {
-                new int[] { 0, id, id, id },
-                new int[] { id, 0, id, id },
-                new int[] { id, id, 0, id },
-                new int[] { id, id, id, 0 },
-
-                //TODO: Lower importance.
-                new int[] { 0, 0, id, id, 0 },  // Offset might have two possible indexes
-                new int[] { 0, id, id, 0, 0 }   // Offset might have two possible indexes
-            };
-        }
-
-        /// <summary>
         /// Calculate the next move.
         /// </summary>
         /// <param name="board"></param>

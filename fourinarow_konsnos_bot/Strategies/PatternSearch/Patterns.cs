@@ -35,7 +35,8 @@ namespace FourInARow.Strategies.PatternSearch
             ImportantPatterns = new int[][]
             {
                 new int[] { 0, 0, id, id, 0 },
-                new int[] { 0, id, id, 0, 0 }
+                new int[] { 0, id, id, 0, 0 },
+                new int[] { 0, id, 0, id, 0 }
             };
 
             if (!initialized)
@@ -43,7 +44,7 @@ namespace FourInARow.Strategies.PatternSearch
                 initialized = true;
                 OffsetAbsolutePatterns = new int[] { 0, 1, 2, 3 };
 
-                OffsetImportantPatterns = new int[] { 1, 3 };
+                OffsetImportantPatterns = new int[] { 1, 3, 2 };
             }
         }
 

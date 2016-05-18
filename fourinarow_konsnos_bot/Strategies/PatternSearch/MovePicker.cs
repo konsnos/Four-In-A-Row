@@ -78,7 +78,7 @@ namespace FourInARow.Strategies.PatternSearch
 
             int[] lowestAssignment = new int[board.ColsLength];
             for (int i = lowestAssignment.Length - 1; i > -1; i--)
-                lowestAssignment[i] = 0;
+                lowestAssignment[i] = -1;
 
             for (int c = 0;c<board.ColsLength;c++)
             {

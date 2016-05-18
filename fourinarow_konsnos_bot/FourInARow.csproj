@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Strategies\Basic.cs" />
+    <Compile Include="Strategies\PatternSearch\MovePicker.cs" />
     <Compile Include="Strategies\PatternSearch\Patterns.cs" />
     <Compile Include="Strategies\PatternSearchStrategy.cs" />
   </ItemGroup>

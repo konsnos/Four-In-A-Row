@@ -18,7 +18,7 @@ namespace FourInARow.Strategies.PatternSearch
 
         /******* IMPORTANT PRIORITY *****/
         public int[][] ImportantPatterns { get; private set; }
-        public List<int>[] OffsetImportantPatterns { get; private set; }
+        public static int[] OffsetImportantPatterns { get; private set; }
 
         public Patterns(int playerid)
         {
@@ -43,11 +43,7 @@ namespace FourInARow.Strategies.PatternSearch
                 initialized = true;
                 OffsetAbsolutePatterns = new int[] { 0, 1, 2, 3 };
 
-                OffsetImportantPatterns = new List<int>[]
-                {
-                    new List<int>() { 1, 4 },
-                    new List<int>() { 0, 3 }
-                };
+                OffsetImportantPatterns = new int[] { 1, 3 };
             }
         }
 
@@ -76,7 +72,7 @@ namespace FourInARow.Strategies.PatternSearch
         {
             List<int[]> moves = new List<int[]>();
 
-            for (int i = 0; i < AbsolutePatterns.Length; i++)
+            for (int i = 0; i < ImportantPatterns.Length; i++)
             {
                 moves.AddRange(getPatternMatches(rows, ImportantPatterns, OffsetImportantPatterns, i, rowsLength, colsLength));
                 moves.AddRange(getPatternMatches(columns, ImportantPatterns, OffsetImportantPatterns, i, rowsLength, colsLength));

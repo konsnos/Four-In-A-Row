@@ -11,6 +11,7 @@ namespace FourInARow.Strategies
 
         Patterns playerPatterns;
         Patterns opponentPatterns;
+        MoveProbabilities movePicker;
 
         private IBoardCrawler rows;
         private IBoardCrawler columns;
@@ -47,6 +48,7 @@ namespace FourInARow.Strategies
                 diagToLeft = new DiagToLeft(board.RowsLength, board.ColsLength);
 
                 probabilities = new float[board.ColsLength];
+                movePicker = new MoveProbabilities(board.ColsLength);
 
                 if (GlobalVars.PRINT_DEBUG)
                     Console.WriteLine("Crawlers initialised.");
@@ -115,17 +117,29 @@ namespace FourInARow.Strategies
                 Console.WriteLine();
             }
 
+            List<int[]> playerPoss;
+            List<int[]> opponentPoss;
+
+            movePicker.Reset(board);
+
             if (GlobalVars.PRINT_DEBUG)
                 Console.WriteLine("Check for wins");
-            List<int[]> winPositions = playerPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
+            playerPoss = playerPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
             if (GlobalVars.PRINT_DEBUG)
                 Console.WriteLine("Check for losses");
-            List<int[]> lossPositions = opponentPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
+            opponentPoss = opponentPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
 
-            udpateProbabilities(board, winPositions, lossPositions);
-            randomizeProbabilities();
-            col = getBestMove();
+            movePicker.UdpateAbsolutes(board, playerPoss, opponentPoss);
 
+            playerPoss = playerPatterns.GetImportantPositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
+            opponentPoss = opponentPatterns.GetImportantPositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
+
+            movePicker.UpdateImportants(board, playerPoss, opponentPoss);
+
+            movePicker.RandomizeProbabilities();
+            col = movePicker.GetBestMove();
+
+            // If no move found pick a random.
             if (col == -1)
             {
                 do
@@ -133,112 +147,8 @@ namespace FourInARow.Strategies
                     col = r.Next(board.ColsLength);
                 } while (!board.CheckIfValid(col));
             }
+
             return col;
-        }
-
-        /// <summary>
-        /// Search for the highest probability to pick as move.
-        /// </summary>
-        /// <returns></returns>
-        private int getBestMove()
-        {
-            int bestColumn = -1;
-
-            for(int c = 0;c<probabilities.Length;c++)
-            {
-                if(bestColumn == -1)
-                {
-                    if (probabilities[c] >= 0f)
-                        bestColumn = c;
-                }
-                else
-                {
-                    if (probabilities[c] > probabilities[bestColumn])
-                        bestColumn = c;
-                }
-            }
-
-            return bestColumn;
-        }
-
-
-        private void randomizeProbabilities()
-        {
-            const int probabilityAmount = 3000;
-            const float turnToFloat = 10000f;
-
-            for(int c = 0;c<probabilities.Length;c++)
-            {
-                if(probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
-                {
-                    probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
-                }
-            }
-        }
-
-        private void udpateProbabilities(Board board, List<int[]> winPoss, List<int[]> lossPoss)
-        {
-            int[] loswestAssignment = new int[board.ColsLength];
-            for (int c = 0; c < board.ColsLength; c++)
-            {
-                if (board.ColsHeights[c] == Board.COLUMN_FULL)  // If column is full
-                {
-                    loswestAssignment[c] = board.RowsLength;    // Don't allow further calculation of this row.
-                    probabilities[c] = PROB_SURE_AVOID;
-                }
-                else
-                    loswestAssignment[c] = 0;
-            }
-
-            for(int c = 0;c<board.ColsLength;c++)
-            {
-                // Alter to win probabilities
-                foreach(int[] pos in winPoss)
-                {
-                    if(pos[1] == c) // if in same column
-                    {
-                        if(pos[0] > loswestAssignment[c])   // if more important than last found.
-                        {
-                            int difference = board.ColsHeights[c] - pos[0];
-                            if (difference == 0)
-                                probabilities[c] = PROB_SURE_MOVE;   // Certain win!
-                            else if (difference == 1)
-                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
-                            else
-                                probabilities[c] = 0.2f;
-                            loswestAssignment[c] = pos[0];
-                        }
-                    }
-                }
-
-                // Alter to loose probabilities
-                foreach(int[] pos in lossPoss)
-                {
-                    if(pos[1] == c) // if in same column
-                    {
-                        if(pos[0] > loswestAssignment[c])   // if more important than last found.
-                        {
-                            int difference = board.ColsHeights[c] - pos[0];
-                            if (difference == 0)
-                                probabilities[c] = PROB_SURE_MOVE;   // Avoid certain loss
-                            else if (difference == 1)
-                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will have a certain win.
-                            else
-                                probabilities[c] = 0f;
-                            loswestAssignment[c] = pos[0];
-                        }
-                    }
-                }
-            }
-
-            if(GlobalVars.PRINT_DEBUG)
-            {
-                Console.WriteLine("Probabilities");
-
-                for (int c = 0; c < board.ColsLength; c++)
-                    Console.Write("{0},", probabilities[c]);
-                Console.WriteLine();
-            }
         }
     }
 }

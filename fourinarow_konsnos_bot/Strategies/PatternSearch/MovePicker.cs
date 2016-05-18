@@ -1,0 +1,171 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace FourInARow.Strategies.PatternSearch
+{
+    class MoveProbabilities
+    {
+        private float[] probabilities;
+        private int[] lowestAssignment;
+
+        private const float PROB_SURE_MOVE = 2f;
+        private const float PROB_SURE_AVOID = -2f;
+
+        public MoveProbabilities(int columnLength)
+        {
+            probabilities = new float[columnLength];
+            lowestAssignment = new int[columnLength];
+        }
+
+        /// <summary>
+        /// Search for the highest probability to pick as move.
+        /// </summary>
+        /// <returns></returns>
+        public int GetBestMove()
+        {
+            if (GlobalVars.PRINT_DEBUG)
+            {
+                Console.WriteLine("Probabilities");
+
+                for (int c = 0; c < probabilities.Length; c++)
+                    Console.Write("{0},", probabilities[c]);
+                Console.WriteLine();
+            }
+
+            int bestColumn = -1;
+
+            for (int c = 0; c < probabilities.Length; c++)
+            {
+                if (bestColumn == -1)
+                {
+                    if (probabilities[c] >= 0f)
+                        bestColumn = c;
+                }
+                else
+                {
+                    if (probabilities[c] > probabilities[bestColumn])
+                        bestColumn = c;
+                }
+            }
+
+            return bestColumn;
+        }
+
+        /// <summary>
+        /// Resets lowest assignments and probabilities.
+        /// </summary>
+        /// <param name="board"></param>
+        public void Reset(Board board)
+        {
+            for (int c = 0; c < board.ColsLength; c++)
+            {
+                if (board.ColsHeights[c] == Board.COLUMN_FULL)  // If column is full
+                {
+                    lowestAssignment[c] = board.RowsLength;    // Don't allow further calculation of this row.
+                    probabilities[c] = PROB_SURE_AVOID;
+                }
+                else
+                {
+                    lowestAssignment[c] = 0;
+                    probabilities[c] = 0;
+                }
+            }
+        }
+
+        public void UpdateImportants(Board board, List<int[]> playerPoss, List<int[]> opponentPoss)
+        {
+            const float PROB_IMPORTANT = 0.8f;
+
+            for (int c = 0;c<board.ColsLength;c++)
+            {
+                if(probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
+                {
+                    foreach(int[] pos in playerPoss)
+                    {
+                        if (pos[1] == c)
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] += PROB_IMPORTANT;
+                            else if (difference == 1)
+                                probabilities[c] -= PROB_IMPORTANT;
+                        }
+                    }
+                    
+                    foreach (int[] pos in opponentPoss)
+                    {
+                        if (pos[1] == c)
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] += PROB_IMPORTANT;
+                            else if (difference == 1)
+                                probabilities[c] -= PROB_IMPORTANT;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void UdpateAbsolutes(Board board, List<int[]> absPPoss, List<int[]> absOPoss)
+        {
+            for (int c = 0; c < board.ColsLength; c++)
+            {
+                // Alter to win probabilities
+                foreach (int[] pos in absPPoss)
+                {
+                    if (pos[1] == c) // if in same column
+                    {
+                        if (pos[0] > lowestAssignment[c])   // if more important than last found.
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] = PROB_SURE_MOVE;   // Certain win!
+                            else if (difference == 1)
+                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
+                            else
+                                probabilities[c] += 0.2f;   // Let's reach it faster!
+                            lowestAssignment[c] = pos[0];
+                        }
+                    }
+                }
+
+                // Alter to loose probabilities
+                foreach (int[] pos in absOPoss)
+                {
+                    if (pos[1] == c) // if in same column
+                    {
+                        if (pos[0] > lowestAssignment[c])   // if more important than last found.
+                        {
+                            int difference = board.ColsHeights[c] - pos[0];
+                            if (difference == 0)
+                                probabilities[c] = PROB_SURE_MOVE;   // Avoid certain loss
+                            else if (difference == 1)
+                                probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will have a certain win.
+                            lowestAssignment[c] = pos[0];
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Randomise choices.
+        /// This should only affect a little.
+        /// </summary>
+        public void RandomizeProbabilities()
+        {
+            Random r = new Random();
+            const int probabilityAmount = 3000;
+            const float turnToFloat = 10000f;
+
+            for (int c = 0; c < probabilities.Length; c++)
+            {
+                if (probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
+                {
+                    probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
+                }
+            }
+        }
+    }
+}

@@ -6,7 +6,7 @@ namespace FourInARow.Strategies.PatternSearch
     class MoveProbabilities
     {
         private float[] probabilities;
-        private int[] lowestAssignment;
+        private int[] lowestAssignmentAbsolute;
 
         private const float PROB_SURE_MOVE = 2f;
         private const float PROB_SURE_AVOID = -2f;
@@ -14,7 +14,7 @@ namespace FourInARow.Strategies.PatternSearch
         public MoveProbabilities(int columnLength)
         {
             probabilities = new float[columnLength];
-            lowestAssignment = new int[columnLength];
+            lowestAssignmentAbsolute = new int[columnLength];
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace FourInARow.Strategies.PatternSearch
             {
                 if (board.ColsHeights[c] == Board.COLUMN_FULL)  // If column is full
                 {
-                    lowestAssignment[c] = board.RowsLength;    // Don't allow further calculation of this row.
+                    lowestAssignmentAbsolute[c] = board.RowsLength;    // Don't allow further calculation of this row.
                     probabilities[c] = PROB_SURE_AVOID;
                 }
                 else
                 {
-                    lowestAssignment[c] = 0;
+                    lowestAssignmentAbsolute[c] = 0;
                     probabilities[c] = 0;
                 }
             }
@@ -75,6 +75,10 @@ namespace FourInARow.Strategies.PatternSearch
         public void UpdateImportants(Board board, List<int[]> playerPoss, List<int[]> opponentPoss)
         {
             const float PROB_IMPORTANT = 0.8f;
+
+            int[] lowestAssignment = new int[board.ColsLength];
+            for (int i = lowestAssignment.Length - 1; i > -1; i--)
+                lowestAssignment[i] = 0;
 
             for (int c = 0;c<board.ColsLength;c++)
             {
@@ -86,9 +90,15 @@ namespace FourInARow.Strategies.PatternSearch
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
+                            {
                                 probabilities[c] += PROB_IMPORTANT;
+                                lowestAssignment[c] = pos[0];
+                            }
                             else if (difference == 1)
+                            {
                                 probabilities[c] -= PROB_IMPORTANT;
+                                lowestAssignment[c] = pos[0];
+                            }
                         }
                     }
                     
@@ -96,11 +106,20 @@ namespace FourInARow.Strategies.PatternSearch
                     {
                         if (pos[1] == c)
                         {
-                            int difference = board.ColsHeights[c] - pos[0];
-                            if (difference == 0)
-                                probabilities[c] += PROB_IMPORTANT;
-                            else if (difference == 1)
-                                probabilities[c] -= PROB_IMPORTANT;
+                            if (pos[0] > lowestAssignment[c])
+                            {
+                                int difference = board.ColsHeights[c] - pos[0];
+                                if (difference == 0)
+                                {
+                                    probabilities[c] += PROB_IMPORTANT;
+                                    lowestAssignment[c] = pos[0];
+                                }
+                                else if (difference == 1)
+                                {
+                                    probabilities[c] -= PROB_IMPORTANT;
+                                    lowestAssignment[c] = pos[0];
+                                }
+                            }
                         }
                     }
                 }
@@ -116,16 +135,18 @@ namespace FourInARow.Strategies.PatternSearch
                 {
                     if (pos[1] == c) // if in same column
                     {
-                        if (pos[0] > lowestAssignment[c])   // if more important than last found.
+                        if (pos[0] > lowestAssignmentAbsolute[c])   // if more important than last found.
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
+                            {
                                 probabilities[c] = PROB_SURE_MOVE;   // Certain win!
+                            }
                             else if (difference == 1)
                                 probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
                             else
                                 probabilities[c] += 0.2f;   // Let's reach it faster!
-                            lowestAssignment[c] = pos[0];
+                            lowestAssignmentAbsolute[c] = pos[0];
                         }
                     }
                 }
@@ -135,14 +156,19 @@ namespace FourInARow.Strategies.PatternSearch
                 {
                     if (pos[1] == c) // if in same column
                     {
-                        if (pos[0] > lowestAssignment[c])   // if more important than last found.
+                        if (pos[0] > lowestAssignmentAbsolute[c])   // if more important than last found.
                         {
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
+                            {
                                 probabilities[c] = PROB_SURE_MOVE;   // Avoid certain loss
+                                lowestAssignmentAbsolute[c] = pos[0];
+                            }
                             else if (difference == 1)
+                            {
                                 probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will have a certain win.
-                            lowestAssignment[c] = pos[0];
+                                lowestAssignmentAbsolute[c] = pos[0];
+                            }
                         }
                     }
                 }

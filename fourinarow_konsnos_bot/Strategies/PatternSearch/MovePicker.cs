@@ -66,7 +66,7 @@ namespace FourInARow.Strategies.PatternSearch
                 }
                 else
                 {
-                    lowestAssignmentAbsolute[c] = 0;
+                    lowestAssignmentAbsolute[c] = -1;
                     probabilities[c] = 0;
                 }
             }

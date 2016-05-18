@@ -103,15 +103,19 @@ namespace FourInARow.Strategies
             movePicker.Reset(board);
 
             if (GlobalVars.PRINT_DEBUG)
-                Console.WriteLine("Check for wins");
+                Console.WriteLine("Check for player absolute");
             playerPoss = playerPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
             if (GlobalVars.PRINT_DEBUG)
-                Console.WriteLine("Check for losses");
+                Console.WriteLine("Check for opponent absolute");
             opponentPoss = opponentPatterns.GetAbsolutePositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
 
             movePicker.UdpateAbsolutes(board, playerPoss, opponentPoss);
 
+            if (GlobalVars.PRINT_DEBUG)
+                Console.WriteLine("Check for player important");
             playerPoss = playerPatterns.GetImportantPositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
+            if (GlobalVars.PRINT_DEBUG)
+                Console.WriteLine("Check for opponent important");
             opponentPoss = opponentPatterns.GetImportantPositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
 
             movePicker.UpdateImportants(board, playerPoss, opponentPoss);

@@ -8,8 +8,9 @@ namespace FourInARow.Strategies.PatternSearch
         private float[] probabilities;
         private int[] lowestAssignmentAbsolute;
 
-        private const float PROB_SURE_MOVE = 2f;
-        private const float PROB_SURE_AVOID = -2f;
+        private const float PROB_SURE_WIN = 11f;
+        private const float PROB_SURE_MOVE = 10f;
+        private const float PROB_SURE_AVOID = -10f;
 
         public MoveProbabilities(int columnLength)
         {
@@ -82,7 +83,7 @@ namespace FourInARow.Strategies.PatternSearch
 
             for (int c = 0;c<board.ColsLength;c++)
             {
-                if(probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
+                if(probabilities[c] < PROB_SURE_MOVE && probabilities[c] > PROB_SURE_AVOID)
                 {
                     foreach(int[] pos in playerPoss)
                     {
@@ -140,7 +141,7 @@ namespace FourInARow.Strategies.PatternSearch
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
                             {
-                                probabilities[c] = PROB_SURE_MOVE;   // Certain win!
+                                probabilities[c] = PROB_SURE_WIN;   // Certain win!
                             }
                             else if (difference == 1)
                                 probabilities[c] = PROB_SURE_AVOID;   // Avoid putting in here because the opponent will cover the win.
@@ -187,7 +188,7 @@ namespace FourInARow.Strategies.PatternSearch
 
             for (int c = 0; c < probabilities.Length; c++)
             {
-                if (probabilities[c] != PROB_SURE_MOVE && probabilities[c] != PROB_SURE_AVOID)
+                if (probabilities[c] < PROB_SURE_MOVE && probabilities[c] > PROB_SURE_AVOID)
                 {
                     probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
                 }

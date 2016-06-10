@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FourInARow
+namespace FourInARow.Strategies.PatternSearch
 {
     static class PatternSearchExtension
     {

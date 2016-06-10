@@ -51,7 +51,7 @@
     <Compile Include="BoardCrawlers\Rows.cs" />
     <Compile Include="FieldState.cs" />
     <Compile Include="GlobalVars.cs" />
-    <Compile Include="PatternSearchExtension.cs" />
+    <Compile Include="Strategies\PatternSearch\PatternSearchExtension.cs" />
     <Compile Include="Strategies\Interfaces\IStrategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -19,3 +19,8 @@ The AI strategy is contained in class Strategy.cs
 ### Who do I talk to? ###
 
 * Konstantinos Egkarchos (konsnosl@gmail.com)
+
+### TO-DO ###
+* Add to pattern search minor priority.
+* Add to pattern search column priority.
+* Create a brute force algorithm.

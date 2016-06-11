@@ -20,6 +20,9 @@ namespace FourInARow.Strategies.PatternSearch
         public int[][] ImportantPatterns { get; private set; }
         public static int[] OffsetImportantPatterns { get; private set; }
 
+        /******* MINOR PRIORITY *****/
+
+
         public Patterns(int playerid)
         {
             id = playerid;
@@ -51,6 +54,7 @@ namespace FourInARow.Strategies.PatternSearch
         /// <summary>
         /// Searches for positions that can win the game.
         /// </summary>
+        /// <returns>A list of absolute moves.</returns>
         public List<int[]> GetAbsolutePositions(IBoardCrawler rows, IBoardCrawler columns, IBoardCrawler diagToRight, IBoardCrawler diagToLeft, int rowsLength, int colsLength)
         {
             List<int[]> moves = new List<int[]>();
@@ -69,6 +73,7 @@ namespace FourInARow.Strategies.PatternSearch
         /// <summary>
         /// Searches for positions that can win the game.
         /// </summary>
+        /// <returns>A list of moves.</returns>
         public List<int[]> GetImportantPositions(IBoardCrawler rows, IBoardCrawler columns, IBoardCrawler diagToRight, IBoardCrawler diagToLeft, int rowsLength, int colsLength)
         {
             List<int[]> moves = new List<int[]>();
@@ -85,8 +90,9 @@ namespace FourInARow.Strategies.PatternSearch
         }
 
         /// <summary>
-        /// Searches for patterns in a board and returns a list of the positions found.
+        /// Searches for patterns in a board.
         /// </summary>
+        /// <returns>List of found matche.s</returns>
         private List<int[]> getPatternMatches(IBoardCrawler board, int[][] patterns, int[] offsets, int patternIndex, int rowsLength, int colsLength)
         {
             List<int[]> matches = new List<int[]>();
@@ -105,8 +111,9 @@ namespace FourInARow.Strategies.PatternSearch
         }
 
         /// <summary>
-        /// Searches for patterns in a board and returns a list of the positions found.
+        /// Searches for patterns in a board.
         /// </summary>
+        /// <returns>List of matches found.</returns>
         private List<int[]> getPatternMatches(IBoardCrawler board, int[][] patterns, List<int>[] offsets, int patternIndex, int rowsLength, int colsLength)
         {
             List<int[]> matches = new List<int[]>();

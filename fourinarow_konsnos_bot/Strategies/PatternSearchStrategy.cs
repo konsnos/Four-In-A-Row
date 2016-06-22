@@ -119,6 +119,7 @@ namespace FourInARow.Strategies
             opponentPoss = opponentPatterns.GetImportantPositions(rows, columns, diagToRight, diagToLeft, board.RowsLength, board.ColsLength);
 
             movePicker.UpdateImportants(board, playerPoss, opponentPoss);
+            movePicker.UpdateColumnPriorities();
 
             movePicker.RandomizeProbabilities();
             col = movePicker.GetBestMove();

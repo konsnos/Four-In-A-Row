@@ -7,15 +7,34 @@ namespace FourInARow.Strategies.PatternSearch
     {
         private float[] probabilities;
         private int[] lowestAssignmentAbsolute;
+        private float[] columnPriorities;
 
         private const float PROB_SURE_WIN = 11f;
         private const float PROB_SURE_MOVE = 10f;
         private const float PROB_SURE_AVOID = -10f;
 
+        /**** RAndomises the probilities by 0 to 0.3. ****/
+        private const int randomProbabilityAmount = 3000;
+        private const float randomProbabilityToFloat = 10000f;
+
+        private const float topColumnProbability = 0.15f;
+
         public MoveProbabilities(int columnLength)
         {
             probabilities = new float[columnLength];
             lowestAssignmentAbsolute = new int[columnLength];
+            columnPriorities = new float[columnLength];
+
+            int midC = (int)Math.Floor(columnLength / 2f);
+            columnPriorities[midC] = topColumnProbability;
+            float columnPriorityStep = topColumnProbability / (float)Math.Ceiling(columnLength / 2f);
+            
+            for (int step = 1; step <= midC;step++)
+            {
+                float newPriority = topColumnProbability - (step * columnPriorityStep);
+                columnPriorities[midC + step] = newPriority;
+                columnPriorities[midC - step] = newPriority;
+            }
         }
 
         /// <summary>
@@ -73,6 +92,12 @@ namespace FourInARow.Strategies.PatternSearch
             }
         }
 
+        /// <summary>
+        /// Sets probabilities of important patterns.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="playerPoss"></param>
+        /// <param name="opponentPoss"></param>
         public void UpdateImportants(Board board, List<int[]> playerPoss, List<int[]> opponentPoss)
         {
             const float PROB_IMPORTANT = 0.8f;
@@ -127,6 +152,12 @@ namespace FourInARow.Strategies.PatternSearch
             }
         }
 
+        /// <summary>
+        /// Sets probabilities of absolute patterns.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="absPPoss"></param>
+        /// <param name="absOPoss"></param>
         public void UdpateAbsolutes(Board board, List<int[]> absPPoss, List<int[]> absOPoss)
         {
             for (int c = 0; c < board.ColsLength; c++)
@@ -175,6 +206,17 @@ namespace FourInARow.Strategies.PatternSearch
                 }
             }
         }
+
+        public void UpdateColumnPriorities()
+        {
+            for (int c = 0; c < columnPriorities.Length; c++)
+            {
+                if (probabilities[c] < PROB_SURE_MOVE && probabilities[c] > PROB_SURE_AVOID)
+                {
+                    probabilities[c] += columnPriorities[c];
+                }
+            }
+        }
         
         /// <summary>
         /// Randomise choices.
@@ -183,14 +225,12 @@ namespace FourInARow.Strategies.PatternSearch
         public void RandomizeProbabilities()
         {
             Random r = new Random();
-            const int probabilityAmount = 3000;
-            const float turnToFloat = 10000f;
 
             for (int c = 0; c < probabilities.Length; c++)
             {
                 if (probabilities[c] < PROB_SURE_MOVE && probabilities[c] > PROB_SURE_AVOID)
                 {
-                    probabilities[c] += (r.Next(probabilityAmount) / turnToFloat); // May affect it from 0 to 0.3
+                    probabilities[c] += (r.Next(randomProbabilityAmount) / randomProbabilityToFloat);
                 }
             }
         }

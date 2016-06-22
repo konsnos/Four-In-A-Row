@@ -20,9 +20,6 @@ namespace FourInARow.Strategies.PatternSearch
         public int[][] ImportantPatterns { get; private set; }
         public static int[] OffsetImportantPatterns { get; private set; }
 
-        /******* MINOR PRIORITY *****/
-
-
         public Patterns(int playerid)
         {
             id = playerid;

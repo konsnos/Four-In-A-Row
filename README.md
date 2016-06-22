@@ -22,5 +22,4 @@ The AI strategy is contained in class Strategy.cs
 
 ### TO-DO ###
 * Add to pattern search minor priority.
-* Add to pattern search column priority.
 * Create a brute force algorithm.

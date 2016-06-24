@@ -121,6 +121,11 @@ namespace FourInARow.Strategies
             movePicker.UpdateImportants(board, playerPoss, opponentPoss);
             movePicker.UpdateColumnPriorities();
 
+            if(GlobalVars.PRINT_DEBUG)
+            {
+                Console.WriteLine("True probabilities");
+                movePicker.GetBestMove();
+            }
             movePicker.RandomizeProbabilities();
             col = movePicker.GetBestMove();
 

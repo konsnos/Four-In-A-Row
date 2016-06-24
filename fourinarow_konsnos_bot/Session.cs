@@ -7,7 +7,6 @@ namespace FourInARow
 {
     public class Session
     {
-        
         public void Run()
         {
             Console.SetIn(new StreamReader(Console.OpenStandardInput(512)));
@@ -53,6 +52,9 @@ namespace FourInARow
                                         int[][] boardArray = parts[3].Split(';').Select(x => x.Split(',').Select(int.Parse).ToArray()).ToArray();
                                         board.Update(boardArray);
                                     break;
+                                    case "round":
+                                        board.UpdateGameRound(int.Parse(parts[3]));
+                                        break;
                                 }
                             break;
                         }

@@ -7,6 +7,8 @@ namespace FourInARow
     {
         /// <summary>Board begins from top left. Jagged array is [Row][Column]. </summary>
         public int[][] BoardArray { get; private set; }
+        ///<summary>Game round. Counting player and opponent moves. Player 1 plays first.</summary>
+        public int GameRound { get; private set; }
         /// <summary>Id of the player's bot. </summary>
         public int MyBotId { get; private set; }
         /// <summary> Columns length. </summary>
@@ -40,6 +42,11 @@ namespace FourInARow
         public void SetRowsLength(int newRowsLength)
         {
             RowsLength = newRowsLength;
+        }
+
+        public void UpdateGameRound(int newGameRound)
+        {
+            GameRound = newGameRound;
         }
 
         public void Update(int[][] boardArray)

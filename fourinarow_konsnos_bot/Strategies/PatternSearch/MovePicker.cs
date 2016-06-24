@@ -12,12 +12,14 @@ namespace FourInARow.Strategies.PatternSearch
         private const float PROB_SURE_WIN = 11f;
         private const float PROB_SURE_MOVE = 10f;
         private const float PROB_SURE_AVOID = -10f;
+        private const float PROB_IMPORTANT_WIN = 0.9f;
+        private const float PROB_IMPORTANT = 0.8f;
 
-        /**** RAndomises the probilities by 0 to 0.3. ****/
-        private const int randomProbabilityAmount = 3000;
+        /**** RAndomises the probilities by 0 to 0.2. ****/
+        private const int randomProbabilityAmount = 2000;
         private const float randomProbabilityToFloat = 10000f;
 
-        private const float topColumnProbability = 0.15f;
+        private const float topColumnProbability = 0.1f;
 
         public MoveProbabilities(int columnLength)
         {
@@ -100,8 +102,6 @@ namespace FourInARow.Strategies.PatternSearch
         /// <param name="opponentPoss"></param>
         public void UpdateImportants(Board board, List<int[]> playerPoss, List<int[]> opponentPoss)
         {
-            const float PROB_IMPORTANT = 0.8f;
-
             int[] lowestAssignment = new int[board.ColsLength];
             for (int i = lowestAssignment.Length - 1; i > -1; i--)
                 lowestAssignment[i] = -1;
@@ -117,12 +117,12 @@ namespace FourInARow.Strategies.PatternSearch
                             int difference = board.ColsHeights[c] - pos[0];
                             if (difference == 0)
                             {
-                                probabilities[c] += PROB_IMPORTANT;
+                                probabilities[c] += PROB_IMPORTANT_WIN;
                                 lowestAssignment[c] = pos[0];
                             }
                             else if (difference == 1)
                             {
-                                probabilities[c] -= PROB_IMPORTANT;
+                                probabilities[c] -= PROB_IMPORTANT_WIN;
                                 lowestAssignment[c] = pos[0];
                             }
                         }

@@ -9,14 +9,14 @@ namespace FourInARow.Strategies
     {
         static Random r;
 
-        Patterns playerPatterns;
-        Patterns opponentPatterns;
+        static Patterns playerPatterns;
+        static Patterns opponentPatterns;
         MoveProbabilities movePicker;
 
-        private IBoardCrawler rows;
-        private IBoardCrawler columns;
-        private IBoardCrawler diagToRight;
-        private IBoardCrawler diagToLeft;
+        static private IBoardCrawler rows;
+        static private IBoardCrawler columns;
+        static private IBoardCrawler diagToRight;
+        static private IBoardCrawler diagToLeft;
 
         private float[] probabilities;
 
@@ -42,6 +42,10 @@ namespace FourInARow.Strategies
             opponentPatterns = new Patterns((newMyBotId == 1) ? 2 : 1);
         }
 
+        /// <summary>
+        /// If both columns and rows are set then board crawlers, and move probabilities are initialised.
+        /// </summary>
+        /// <param name="board"></param>
         public void UpdateBoardSize(Board board)
         {
             if(board.ColsLength != 0 && board.RowsLength != 0)
@@ -51,6 +55,7 @@ namespace FourInARow.Strategies
                 diagToRight = new DiagToRight(board.RowsLength, board.ColsLength);
                 diagToLeft = new DiagToLeft(board.RowsLength, board.ColsLength);
 
+                // as these are not static they should be initialized at a new instance of the class.
                 probabilities = new float[board.ColsLength];
                 movePicker = new MoveProbabilities(board.ColsLength);
 

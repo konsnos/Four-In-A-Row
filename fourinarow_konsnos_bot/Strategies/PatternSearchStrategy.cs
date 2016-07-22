@@ -7,7 +7,7 @@ namespace FourInARow.Strategies
 {
     class PatternSearchStrategy : IStrategy
     {
-        Random r;
+        static Random r;
 
         Patterns playerPatterns;
         Patterns opponentPatterns;
@@ -23,9 +23,13 @@ namespace FourInARow.Strategies
         private const float PROB_SURE_MOVE = 2f;
         private const float PROB_SURE_AVOID = -2f;
 
+        ///<summary>Id to use to break the lines in the crawlers to indicate a new line.</summary>
+        public const int PATTERN_BREAKER = 9;
+
         public PatternSearchStrategy()
         {
-            r = new Random();
+            if(r == null)
+                r = new Random();
         }
 
         /// <summary>
@@ -62,8 +66,6 @@ namespace FourInARow.Strategies
         /// <returns></returns>
         public int NextMove(Board board)
         {
-            int col;
-
             for (int i = 0; i < probabilities.Length; i++)
                 probabilities[i] = 0;
 
@@ -127,7 +129,7 @@ namespace FourInARow.Strategies
                 movePicker.GetBestMove();
             }
             movePicker.RandomizeProbabilities();
-            col = movePicker.GetBestMove();
+            int col = movePicker.GetBestMove();
 
             // If no move found pick a random.
             if (col == -1)

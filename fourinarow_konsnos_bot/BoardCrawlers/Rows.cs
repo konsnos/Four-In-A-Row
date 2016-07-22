@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FourInARow.Strategies;
 
 namespace FourInARow.BoardCrawlers
 {
@@ -17,7 +17,7 @@ namespace FourInARow.BoardCrawlers
             boardLine = new int[(rowsLength + 1) * colsLength];
 
             for(int c = colsLength;c<boardLine.Length;c+= (colsLength + 1))
-                boardLine[c] = GlobalVars.PATTERN_BREAKER; // new lines
+                boardLine[c] = PatternSearchStrategy.PATTERN_BREAKER; // new lines
         }
 
         public void CreateBoard(Board board)

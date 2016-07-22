@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FourInARow.Strategies;
 
 namespace FourInARow.BoardCrawlers
 {
@@ -52,7 +52,7 @@ namespace FourInARow.BoardCrawlers
                 }
 
                 for (; curLineLength < lineLength; curLineLength++)
-                    boardLine[count++] = GlobalVars.PATTERN_BREAKER;  // Fill up line length
+                    boardLine[count++] = PatternSearchStrategy.PATTERN_BREAKER;  // Fill up line length
             }
 
             int maxC = board.ColsLength - 1;
@@ -72,7 +72,7 @@ namespace FourInARow.BoardCrawlers
                 }
 
                 for (; curLineLength < lineLength; curLineLength++)
-                    boardLine[count++] = GlobalVars.PATTERN_BREAKER;  // Fill up line length
+                    boardLine[count++] = PatternSearchStrategy.PATTERN_BREAKER;  // Fill up line length
             }
         }
 

@@ -7,10 +7,38 @@ namespace FourInARow
     {
         /// <summary>Board begins from top left. Jagged array is [Row][Column]. </summary>
         public int[][] BoardArray { get; private set; }
-        ///<summary>Game round. Counting player and opponent moves. Player 1 plays first.</summary>
-        public int GameRound { get; private set; }
-        /// <summary>Id of the player's bot. </summary>
-        public int MyBotId { get; private set; }
+        public struct BoardSettings
+        {
+            ///<summary>Game round. Counting player and opponent moves. Player 1 plays first.</summary>
+            public int GameRound { get; private set; }
+            /// <summary>Id of the player's bot. </summary>
+            public int MyBotId { get; private set; }
+
+            public BoardSettings(BoardSettings copy)
+            {
+                GameRound = copy.GameRound;
+                MyBotId = copy.MyBotId;
+            }
+
+            public BoardSettings(int newGameRound, int newMyBotId)
+            {
+                GameRound = newGameRound;
+                MyBotId = newMyBotId;
+            }
+
+            public void UpdateGameRound(int newGameRound)
+            {
+                GameRound = newGameRound;
+            }
+
+            public void SetMyBotId(int newMyBotId)
+            {
+                MyBotId = newMyBotId;
+            }
+        }
+
+        public BoardSettings Settings { get; private set; }
+
         /// <summary> Columns length. </summary>
         public int ColsLength {get;private set;}
         /// <summary> Rows column. Starts from top. </summary>
@@ -25,11 +53,16 @@ namespace FourInARow
             // Initialise variables.
             ColsLength = 0;
             RowsLength = 0;
+
+            Settings = new BoardSettings();
         }
 
-        public void SetMyBotId(int myBotId)
+        public Board(Board copy)
         {
-            MyBotId = myBotId;
+            BoardArray = (int[][]) copy.BoardArray.Clone();
+            Settings = copy.Settings;
+            ColsLength = ColsLength;
+            RowsLength = RowsLength;
         }
 
         public void SetColumnsLength(int newColsLength)
@@ -44,14 +77,9 @@ namespace FourInARow
             RowsLength = newRowsLength;
         }
 
-        public void UpdateGameRound(int newGameRound)
+        public void Update(int[][] newBoardArray)
         {
-            GameRound = newGameRound;
-        }
-
-        public void Update(int[][] boardArray)
-        {
-            BoardArray = boardArray;
+            BoardArray = newBoardArray;
 
             // Calculate all column heights
             for (int c = 0; c < ColsLength; c++)
@@ -79,7 +107,16 @@ namespace FourInARow
             return COLUMN_FULL;
         }
 
-
+        /// <summary>
+        /// Sets a new owner for a specific cell.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="ownerId"></param>
+        public void SetCell(int row, int col, int ownerId)
+        {
+            BoardArray[row][col] = ownerId;
+        }
         
         /// <summary>
         /// Checks the state of a field.
@@ -91,7 +128,7 @@ namespace FourInARow
         {
             if (BoardArray[row][col] == 0)
                 return FieldState.Free;
-            if (BoardArray[row][col] == MyBotId) 
+            if (BoardArray[row][col] == Settings.MyBotId) 
                 return FieldState.Me;
             return FieldState.Opponent;
         }
